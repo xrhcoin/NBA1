@@ -7,6 +7,34 @@ from src.Utils.Dictionaries import team_index_current
 from src.Utils.tools import create_todays_games_from_odds, get_json_data, to_data_frame, get_todays_games_json, create_todays_games
 from src.DataProviders.SbrOddsProvider import SbrOddsProvider
 
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+# Load dataset
+df = pd.read_csv('iris.csv')
+
+# Encode categorical target variable
+le = LabelEncoder()
+df['species'] = le.fit_transform(df['species'])
+
+# Split dataset into training and testing sets
+X = df.drop('species', axis=1)
+y = df['species']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train Decision Tree Classifier
+clf = DecisionTreeClassifier()
+clf.fit(X_train, y_train)
+
+# Make predictions on the testing set and calculate accuracy
+y_pred = clf.predict(X_test)
+acc = accuracy_score(y_test, y_pred)
+print("Accuracy:", acc)
+
+
 
 todays_games_url = 'https://data.nba.com/data/10s/v2015/json/mobile_teams/nba/2022/scores/00_todays_scores.json'
 data_url = 'https://stats.nba.com/stats/leaguedashteamstats?' \
